@@ -25,8 +25,10 @@ public class ProdutorController {
 	
 	@GetMapping("intervalo-premios")
 	public ResponseEntity<ProdutorMinMaxIntervaloPremiosDTO> getMaiorMenorIntervalo() {
-		ProdutorMinMaxIntervaloPremiosDTO dto = produtorService.getMaiorMenorIntervalor();
-		
+		ProdutorMinMaxIntervaloPremiosDTO dto = new ProdutorMinMaxIntervaloPremiosDTO();
+
+		dto = produtorService.getMaiorMenorIntervalor();
+
 		HttpStatus status = HttpStatus.OK;
 		if ( dto.getMax().isEmpty() && dto.getMin().isEmpty() ) {
 			status = HttpStatus.NO_CONTENT;

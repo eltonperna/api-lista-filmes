@@ -1,7 +1,9 @@
 package br.com.filmesapi.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import br.com.filmesapi.dto.ProdutorMinMaxIntervaloPremiosDTO;
 import br.com.filmesapi.entity.Filme;
 import br.com.filmesapi.entity.ProdutorFilme;
 import br.com.filmesapi.entity.Produtor;
@@ -13,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
-import br.com.filmesapi.dto.ProdutorMinMaxIntervaloPremiosDTO;
 import br.com.filmesapi.dto.ProdutorPremiosDTO;
 
 
@@ -47,8 +48,8 @@ public class ProdutorService {
 	public ProdutorMinMaxIntervaloPremiosDTO getMaiorMenorIntervalor() {
 		List<ProdutorFilme> mpList = produtorFilmeRepository.findByFilmeVencedorOrderByProdutorId(true);
 		
-		ProdutorPremiosDTO min = findMenorIntervalo(mpList);
-		ProdutorPremiosDTO max = findMaiorIntervalo(mpList);
+		List<ProdutorPremiosDTO> min = findMenorIntervalo(mpList);
+		List<ProdutorPremiosDTO> max = findMaiorIntervalo(mpList);
 		
 		ProdutorMinMaxIntervaloPremiosDTO dto = new ProdutorMinMaxIntervaloPremiosDTO();
 		dto.addMin(min);
@@ -57,11 +58,13 @@ public class ProdutorService {
 		return dto;
 	}
 
-	private ProdutorPremiosDTO findMenorIntervalo(List<ProdutorFilme> mpList) {
-		ProdutorPremiosDTO min = new ProdutorPremiosDTO(null, Integer.MAX_VALUE, null, null);
-		
+	private List<ProdutorPremiosDTO> findMenorIntervalo(List<ProdutorFilme> mpList) {
+		List<ProdutorPremiosDTO> listMin = new ArrayList<>();
+		Integer minIntervalo = Integer.MAX_VALUE;
+
 		for ( int i = 0; i < mpList.size() - 1; i++ ) {
-			
+			ProdutorPremiosDTO min = new ProdutorPremiosDTO(null, null, null, null);
+
 			for (int j = i + 1; j < mpList.size(); j++) {
 				
 				ProdutorFilme mpi = mpList.get(i);
@@ -70,26 +73,42 @@ public class ProdutorService {
 				if (mpi.getProdutor().equals(mpj.getProdutor())) {
 					Integer intervalo = Math.abs(mpi.getFilme().getAno()-mpj.getFilme().getAno());
 					
-					if (intervalo < min.getIntervalo()) {
+					if (intervalo < minIntervalo) {
+						if (!listMin.isEmpty()) {
+							listMin.clear();
+						}
+
+						minIntervalo = intervalo;
+
 						min.setIntervalo(intervalo);
 						min.setProdutor(mpi.getProdutor().getNome());
 						min.setAnoVencAnterior(mpi.getFilme().getAno());
 						min.setAnoVencSeguinte(mpj.getFilme().getAno());
-						
-						break;
+
+						listMin.add(min);
+
+					} else if (intervalo.equals(minIntervalo)) {
+						min.setIntervalo(intervalo);
+						min.setProdutor(mpi.getProdutor().getNome());
+						min.setAnoVencAnterior(mpi.getFilme().getAno());
+						min.setAnoVencSeguinte(mpj.getFilme().getAno());
+
+						listMin.add(min);
 					}
 				}
 			}
 		}
 		
-		return min;
+		return listMin;
 	}
 	
-	private ProdutorPremiosDTO findMaiorIntervalo(List<ProdutorFilme> mpList) {
-		ProdutorPremiosDTO max = new ProdutorPremiosDTO(null, Integer.MIN_VALUE, null, null);
-		
+	private List<ProdutorPremiosDTO> findMaiorIntervalo(List<ProdutorFilme> mpList) {
+		List<ProdutorPremiosDTO> listMax = new ArrayList<>();
+		Integer maxIntervalo = Integer.MIN_VALUE;
+
 		for ( int i = 0; i < mpList.size() - 1; i++ ) {
-			
+			ProdutorPremiosDTO max = new ProdutorPremiosDTO(null, Integer.MIN_VALUE, null, null);
+
 			for (int j = i + 1; j < mpList.size(); j++) {
 				
 				ProdutorFilme mpi = mpList.get(i);
@@ -98,19 +117,31 @@ public class ProdutorService {
 				if (mpi.getProdutor().equals(mpj.getProdutor())) {
 					Integer intervalo = Math.abs(mpi.getFilme().getAno()-mpj.getFilme().getAno());
 					
-					if (intervalo > max.getIntervalo()) {
+					if (intervalo > maxIntervalo) {
+						if (!listMax.isEmpty())
+							listMax.clear();
+
+						maxIntervalo = intervalo;
+
 						max.setIntervalo(intervalo);
 						max.setProdutor(mpi.getProdutor().getNome());
 						max.setAnoVencAnterior(mpi.getFilme().getAno());
 						max.setAnoVencSeguinte(mpj.getFilme().getAno());
-						
-						break;
+
+						listMax.add(max);
+					} else if (intervalo.equals(maxIntervalo)) {
+						max.setIntervalo(intervalo);
+						max.setProdutor(mpi.getProdutor().getNome());
+						max.setAnoVencAnterior(mpi.getFilme().getAno());
+						max.setAnoVencSeguinte(mpj.getFilme().getAno());
+
+						listMax.add(max);
 					}
 				}
 			}
 		}
 		
-		return max;
+		return listMax;
 	}
 	
 }

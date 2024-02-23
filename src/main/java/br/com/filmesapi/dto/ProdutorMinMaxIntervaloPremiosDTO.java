@@ -33,12 +33,12 @@ public class ProdutorMinMaxIntervaloPremiosDTO {
 		this.max = max;
 	}
 	
-	public void addMin(ProdutorPremiosDTO min) {
-		this.getMin().add(min);
+	public void addMin(List<ProdutorPremiosDTO> min) {
+		this.getMin().addAll(min);
 	}
 	
-	public void addMax(ProdutorPremiosDTO max) {
-		this.getMax().add(max);
+	public void addMax(List<ProdutorPremiosDTO> max) {
+		this.getMax().addAll(max);
 	}
 
 }

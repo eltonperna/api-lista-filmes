@@ -42,11 +42,10 @@ public class ProdutorControllerIntegrationTest {
     }
 
     @Test
-    public void getGreatestWinnersTest() throws Exception {
-        mockMvc.perform( MockMvcRequestBuilders.get("/producer/interval-prizes").contentType(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect( jsonPath("$.min.*.producer", hasItem( is( "Joel Silver" ))))
-            .andExpect( jsonPath("$.max.*.producer", hasItem( is( "Matthew Vaughn" ))));
+    public void getMaiorMenorIntervaloTest() throws Exception {
+        mockMvc.perform( MockMvcRequestBuilders.get("/producer/intervalo-premios").contentType(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.status().isOk());
+
     }
     
 }

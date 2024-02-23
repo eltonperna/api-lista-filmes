@@ -19,6 +19,13 @@ public class ProdutorPremiosDTO {
 		this.anoVencSeguinte = anoVencSeguinte;
 	}
 
+	public void limpar() {
+		this.produtor = "";
+		this.intervalo = null;
+		this.anoVencSeguinte = null;
+		this.anoVencAnterior = null;
+	}
+
 	public String getProdutor() {
 		return produtor;
 	}
